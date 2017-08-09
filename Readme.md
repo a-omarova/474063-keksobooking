@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Аминат Омарова](https://up.htmlacademy.ru/javascript/10/user/474063).
-* Наставник: [Иван Горбунов] (https://htmlacademy.ru/profile/id470365).
+* Наставник: [Иван Горбунов](https://htmlacademy.ru/profile/id470365).
 
 ---
 
