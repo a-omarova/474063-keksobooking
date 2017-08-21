@@ -20,7 +20,7 @@ var titles = ['Большая уютная квартира',
 
 var types = ['flat', 'house', 'bungalo'];
 
-var chechTimes = ['12:00', '13:00', '14:00'];
+var checkTimes = ['12:00', '13:00', '14:00'];
 
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
@@ -34,6 +34,7 @@ function createClosestCompetitors() {
   }
 
   drawPins(ads);
+  drawDialogPanel(ads);
 }
 
 function createCompetitor() {
@@ -54,15 +55,14 @@ function createCompetitor() {
   oneAd.offer.type = getRandomElem(types);
   oneAd.offer.rooms = getRandomNumber(1, 5);
   oneAd.offer.guests = getRandomNumber(1, 8);
-  oneAd.offer.chechin = getRandomElem(chechTimes);
+  oneAd.offer.checkin = getRandomElem(checkTimes);
+  oneAd.offer.checkout = getRandomElem(checkTimes);
   oneAd.offer.features = getRandomElem(features);
   oneAd.offer.description = '';
   oneAd.offer.photos = [];
 
   return oneAd;
 }
-
-console.log(createCompetitor());
 
 function getRandomElem(arr) {
   var rand = Math.floor(Math.random() * arr.length);
@@ -99,4 +99,36 @@ function drawPins(arr) {
   }
 
   pinMap.appendChild(fragment);
+}
+
+function drawDialogPanel(arr) {
+  var parentBlock = document.querySelector('.dialog');
+  var dialogPanel = document.querySelector('.dialog__panel');
+
+  var newPanel = document.querySelector('#lodge-template').content.querySelector('.dialog__panel').cloneNode(true);
+  writeAdData(newPanel, '.lodge__title', arr[0].offer.title);
+  writeAdData(newPanel, '.lodge__address', arr[0].offer.address);
+  writeAdData(newPanel, '.lodge__price', arr[0].offer.price + '&#x20bd;/ночь');
+  writeAdData(newPanel, '.lodge__type', arr[0].offer.type);
+  writeAdData(newPanel, '.lodge__rooms-and-guests', 'Для ' + arr[0].offer.guests + ' гостей в ' + arr[0].offer.rooms + ' комнатах');
+  writeAdData(newPanel, '.lodge__checkin-time', 'Заезд после ' + arr[0].offer.checkin + ', выезд до ' + arr[0].offer.checkout);
+  writeAdData(newPanel, '.lodge__features', arr[0].offer.features);
+  writeAdData(newPanel, '.lodge__description', arr[0].offer.description);
+
+  replaceAvatar(arr);
+
+  parentBlock.removeChild(dialogPanel);
+  parentBlock.appendChild(newPanel);
+}
+
+function writeAdData(elem, className, value) {
+  elem.querySelector(className).innerHTML = value;
+}
+
+function replaceAvatar(arr) {
+  var dialogTitle = document.querySelector('.dialog__title');
+  var avatarImg = document.querySelector('.dialog__title > img');
+
+  dialogTitle.removeChild(avatarImg);
+  dialogTitle.insertAdjacentHTML('afterbegin', '<img src="' + arr[0].author.avatar + '" alt="Avatar" width="70" height="70">');
 }
