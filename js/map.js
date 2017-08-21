@@ -45,7 +45,6 @@ function createCompetitor() {
   };
 
   oneAd.author.avatar = getRandomElem(images);
-
   oneAd.location.x = getRandomNumber(300, 900);
   oneAd.location.y = getRandomNumber(100, 500);
 
@@ -66,7 +65,6 @@ function createCompetitor() {
 
 function getRandomElem(arr) {
   var rand = Math.floor(Math.random() * arr.length);
-
   return arr[rand];
 }
 
@@ -78,7 +76,6 @@ function getRandomNumber(min, max) {
 
 function drawPins(arr) {
   var pinMap = document.querySelector('.tokyo__pin-map');
-
   var fragment = document.createDocumentFragment();
 
   var widthPin = 40;
@@ -86,11 +83,10 @@ function drawPins(arr) {
 
   for (var i = 0; i < arr.length; i++) {
     var pin = document.createElement('div');
-    pin.className = 'pin';
-
     var x = arr[i].location.x - (widthPin / 2);
     var y = arr[i].location.y - heightPin;
 
+    pin.className = 'pin';
     pin.style.left = x + 'px';
     pin.style.top = y + 'px';
     pin.innerHTML = '<img src=" ' + arr[i].author.avatar + ' " class="rounded" width=" ' + widthPin + ' " height=" ' + heightPin + ' "/>';
@@ -103,7 +99,7 @@ function drawPins(arr) {
 
 function drawDialogPanel(arr) {
   var parentBlock = document.querySelector('.dialog');
-  var dialogPanel = document.querySelector('.dialog__panel');
+  var dialogPanel = parentBlock.querySelector('.dialog__panel');
 
   var newPanel = document.querySelector('#lodge-template').content.querySelector('.dialog__panel').cloneNode(true);
   writeAdData(newPanel, '.lodge__title', arr[0].offer.title);
