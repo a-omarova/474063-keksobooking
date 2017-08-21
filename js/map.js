@@ -24,6 +24,8 @@ var chechTimes = ['12:00', '13:00', '14:00'];
 
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
+createClosestCompetitors();
+
 function createClosestCompetitors() {
   var ads = [];
 
@@ -31,10 +33,8 @@ function createClosestCompetitors() {
     ads.push(createCompetitor());
   }
 
-  return ads;
+  drawPins(ads);
 }
-
-console.log(createClosestCompetitors());
 
 function createCompetitor() {
   var oneAd = {
@@ -74,4 +74,29 @@ function getRandomNumber(min, max) {
   var rand = min - 0.5 + Math.random() * (max - min + 1);
   rand = Math.round(rand);
   return rand;
+}
+
+function drawPins(arr) {
+  var pinMap = document.querySelector('.tokyo__pin-map');
+
+  var fragment = document.createDocumentFragment();
+
+  var widthPin = 40;
+  var heightPin = 40;
+
+  for (var i = 0; i < arr.length; i++) {
+    var pin = document.createElement('div');
+    pin.className = 'pin';
+
+    var x = arr[i].location.x - (widthPin / 2);
+    var y = arr[i].location.y - heightPin;
+
+    pin.style.left = x + 'px';
+    pin.style.top = y + 'px';
+    pin.innerHTML = '<img src=" ' + arr[i].author.avatar + ' " class="rounded" width=" ' + widthPin + ' " height=" ' + heightPin + ' "/>';
+
+    fragment.appendChild(pin);
+  }
+
+  pinMap.appendChild(fragment);
 }
