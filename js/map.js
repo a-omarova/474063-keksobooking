@@ -24,13 +24,15 @@ var checkTimes = ['12:00', '13:00', '14:00'];
 
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
-createClosestCompetitors();
+createClosestCompetitors(images, getRandomTitle(titles));
 
-function createClosestCompetitors() {
+function createClosestCompetitors(imagesList, titlesList) {
   var ads = [];
 
   for (var i = 0; i < 8; i++) {
     ads.push(createCompetitor());
+    ads[i].author.avatar = imagesList[i];
+    ads[i].offer.title = titlesList[i];
   }
 
   drawPins(ads);
@@ -44,11 +46,9 @@ function createCompetitor() {
     'location': {}
   };
 
-  oneAd.author.avatar = getRandomElem(images);
   oneAd.location.x = getRandomNumber(300, 900);
   oneAd.location.y = getRandomNumber(100, 500);
 
-  oneAd.offer.title = getRandomElem(titles);
   oneAd.offer.address = oneAd.location.x + ',' + oneAd.location.y;
   oneAd.offer.price = getRandomNumber(1000, 1000000);
   oneAd.offer.type = getRandomElem(types);
@@ -56,7 +56,7 @@ function createCompetitor() {
   oneAd.offer.guests = getRandomNumber(1, 8);
   oneAd.offer.checkin = getRandomElem(checkTimes);
   oneAd.offer.checkout = getRandomElem(checkTimes);
-  oneAd.offer.features = getRandomElem(features);
+  oneAd.offer.features = getRandomFeaturesArray(features);
   oneAd.offer.description = '';
   oneAd.offer.photos = [];
 
@@ -72,6 +72,34 @@ function getRandomNumber(min, max) {
   var rand = min - 0.5 + Math.random() * (max - min + 1);
   rand = Math.round(rand);
   return rand;
+}
+
+function getRandomFeaturesArray(arr) {
+  fisherYatesShuffle(arr);
+  var randomFeatures = [];
+  for (var i = 0; i < getRandomNumber(1, arr.length); i++) {
+    randomFeatures.push(arr[i]);
+  }
+  return randomFeatures;
+}
+
+function getRandomTitle(arr) {
+  fisherYatesShuffle(arr);
+  var randomTitle = [];
+  for (var i = 0; i < getRandomNumber(1, arr.length); i++) {
+    randomTitle.push(arr[i]);
+  }
+  return randomTitle;
+}
+
+function fisherYatesShuffle(arr) {
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = arr[i];
+    arr[i] = arr[j];
+    arr[j] = t;
+  }
+  return arr;
 }
 
 function drawPins(arr) {
@@ -99,26 +127,48 @@ function drawPins(arr) {
 
 function drawDialogPanel(arr) {
   var parentBlock = document.querySelector('.dialog');
-  var dialogPanel = parentBlock.querySelector('.dialog__panel');
-
+  // var dialogPanel = parentBlock.querySelector('.dialog__panel');
   var newPanel = document.querySelector('#lodge-template').content.querySelector('.dialog__panel').cloneNode(true);
+
   writeAdData(newPanel, '.lodge__title', arr[0].offer.title);
   writeAdData(newPanel, '.lodge__address', arr[0].offer.address);
   writeAdData(newPanel, '.lodge__price', arr[0].offer.price + '&#x20bd;/ночь');
-  writeAdData(newPanel, '.lodge__type', arr[0].offer.type);
+  writeAdData(newPanel, '.lodge__type', writeType(arr));
   writeAdData(newPanel, '.lodge__rooms-and-guests', 'Для ' + arr[0].offer.guests + ' гостей в ' + arr[0].offer.rooms + ' комнатах');
   writeAdData(newPanel, '.lodge__checkin-time', 'Заезд после ' + arr[0].offer.checkin + ', выезд до ' + arr[0].offer.checkout);
-  writeAdData(newPanel, '.lodge__features', arr[0].offer.features);
+  writeAdData(newPanel, '.lodge__features', writeAdFeatures(arr));
   writeAdData(newPanel, '.lodge__description', arr[0].offer.description);
 
   replaceAvatar(arr);
 
-  parentBlock.removeChild(dialogPanel);
   parentBlock.appendChild(newPanel);
 }
 
 function writeAdData(elem, className, value) {
   elem.querySelector(className).innerHTML = value;
+}
+
+function writeAdFeatures(arr) {
+  var featuresList = arr[0].offer.features;
+  var featuresHtmlList = '';
+
+  for (var i = 0; i < featuresList.length; i++) {
+    featuresHtmlList += '<span class="feature__image feature__image--' + featuresList[i] + '"></span>';
+  }
+
+  return featuresHtmlList;
+}
+
+function writeType(arr) {
+  var type = arr[0].offer.type;
+
+  if (type === 'flat') {
+    return 'Квартира';
+  } else if (type === 'bungalo') {
+    return 'Бунгало';
+  } else if (type === 'house') {
+    return 'Дом';
+  }
 }
 
 function replaceAvatar(arr) {
