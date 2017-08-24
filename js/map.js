@@ -50,7 +50,7 @@ function createCompetitor(image, title) {
     y: getRandomNumber(100, 500)
   };
   var offerObj = {
-    address: location.x + ', ' + location.y,
+    address: locationObj.x + ', ' + locationObj.y,
     title: title,
     price: getRandomNumber(1000, 1000000),
     type: getRandomElem(types),
