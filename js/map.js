@@ -47,7 +47,7 @@ function createCompetitor(image, title) {
   var avatarObj = {avatar: image};
   var locationObj = {
     x: getRandomNumber(300, 900),
-    y: getRandomNumber(100, 500)
+    y: getRandomNumber(150, 500)
   };
   var offerObj = {
     address: locationObj.x + ', ' + locationObj.y,
