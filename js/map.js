@@ -80,17 +80,18 @@ function getRandomNumber(min, max) {
 }
 
 function getRandomFeaturesArray(featuresArr) {
-  var featuresShuffle = fisherYatesShuffle(featuresArr);
-  var randomLength = getRandomNumber(1, featuresShuffle);
+  var featuresShuffle = shuffle(featuresArr);
+  var randomLength = getRandomNumber(1, featuresShuffle.length);
 
   return featuresShuffle.slice(0, randomLength);
 }
 
 function getShuffleTitles(titlesArr) {
-  return fisherYatesShuffle(titlesArr);
+  var shuffleTitles = shuffle(titlesArr);
+  return shuffleTitles;
 }
 
-function fisherYatesShuffle(arr) {
+function shuffle(arr) {
   var newArray = arr.slice();
   for (var i = newArray.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
@@ -144,8 +145,8 @@ function drawDialogPanel(arr) {
   parentBlock.appendChild(newPanel);
 }
 
-function writeAdData(elem, className, value) {
-  elem.querySelector('.lodge__' + className).innerHTML = value;
+function writeAdData(elem, elemName, value) {
+  elem.querySelector('.lodge__' + elemName).innerHTML = value;
 }
 
 function writeAdFeatures(featuresList) {
