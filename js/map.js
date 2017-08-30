@@ -28,7 +28,9 @@ var checkTimes = ['12:00', '13:00', '14:00'];
 
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
-var competitors = createClosestCompetitors(images, getShuffleTitles(titles));
+var shuffleTitles = shuffle(titles);
+
+var competitors = createClosestCompetitors(images, shuffleTitles);
 
 drawPins(competitors);
 drawDialogPanel(competitors);
@@ -84,11 +86,6 @@ function getRandomFeaturesArray(featuresArr) {
   var randomLength = getRandomNumber(1, featuresShuffle.length);
 
   return featuresShuffle.slice(0, randomLength);
-}
-
-function getShuffleTitles(titlesArr) {
-  var shuffleTitles = shuffle(titlesArr);
-  return shuffleTitles;
 }
 
 function shuffle(arr) {
