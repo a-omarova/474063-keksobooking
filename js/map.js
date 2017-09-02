@@ -33,7 +33,7 @@ var shuffleTitles = shuffle(titles);
 var competitors = createClosestCompetitors(images, shuffleTitles);
 
 drawPins(competitors);
-drawDialogPanel(competitors);
+drawDialogPanel(competitors[0]);
 
 function createClosestCompetitors(imagesList, titlesList) {
   var ads = [];
@@ -99,44 +99,50 @@ function shuffle(arr) {
   return newArray;
 }
 
+function createPin(competitor, widthPin, heightPin) {
+  var pin = document.createElement('div');
+  var x = competitor.location.x - (widthPin / 2);
+  var y = competitor.location.y - heightPin;
+
+  pin.className = 'pin';
+  pin.style.left = x + 'px';
+  pin.style.top = y + 'px';
+  pin.innerHTML = '<img src=" ' + competitor.author.avatar + ' " class="rounded" width=" ' + widthPin + ' " height=" ' + heightPin + ' "/>';
+
+  return pin;
+}
+
 function drawPins(arr) {
   var pinMap = document.querySelector('.tokyo__pin-map');
   var fragment = document.createDocumentFragment();
+
+  //  TODO create 'createPin' func ~108-122
 
   var widthPin = 40;
   var heightPin = 40;
 
   for (var i = 0; i < arr.length; i++) {
-    var pin = document.createElement('div');
-    var x = arr[i].location.x - (widthPin / 2);
-    var y = arr[i].location.y - heightPin;
-
-    pin.className = 'pin';
-    pin.style.left = x + 'px';
-    pin.style.top = y + 'px';
-    pin.innerHTML = '<img src=" ' + arr[i].author.avatar + ' " class="rounded" width=" ' + widthPin + ' " height=" ' + heightPin + ' "/>';
-
-    fragment.appendChild(pin);
+    fragment.appendChild(createPin(arr[i], widthPin, heightPin));
   }
 
   pinMap.appendChild(fragment);
 }
 
-function drawDialogPanel(arr) {
+function drawDialogPanel(competitor) {
   var parentBlock = document.querySelector('.dialog');
   var dialogPanel = parentBlock.querySelector('.dialog__panel');
   var newPanel = document.querySelector('#lodge-template').content.querySelector('.dialog__panel').cloneNode(true);
 
-  writeAdData(newPanel, 'title', arr[0].offer.title);
-  writeAdData(newPanel, 'address', arr[0].offer.address);
-  writeAdData(newPanel, 'price', arr[0].offer.price + '&#x20bd;/ночь');
-  writeAdData(newPanel, 'type', writeType(arr[0].offer.type));
-  writeAdData(newPanel, 'rooms-and-guests', 'Для ' + arr[0].offer.guests + ' гостей в ' + arr[0].offer.rooms + ' комнатах');
-  writeAdData(newPanel, 'checkin-time', 'Заезд после ' + arr[0].offer.checkin + ', выезд до ' + arr[0].offer.checkout);
-  writeAdData(newPanel, 'features', writeAdFeatures(arr[0].offer.features));
-  writeAdData(newPanel, 'description', arr[0].offer.description);
+  writeAdData(newPanel, 'title', competitor.offer.title);
+  writeAdData(newPanel, 'address', competitor.offer.address);
+  writeAdData(newPanel, 'price', competitor.offer.price + '&#x20bd;/ночь');
+  writeAdData(newPanel, 'type', writeType(competitor.offer.type));
+  writeAdData(newPanel, 'rooms-and-guests', 'Для ' + competitor.offer.guests + ' гостей в ' + competitor.offer.rooms + ' комнатах');
+  writeAdData(newPanel, 'checkin-time', 'Заезд после ' + competitor.offer.checkin + ', выезд до ' + competitor.offer.checkout);
+  writeAdData(newPanel, 'features', writeAdFeatures(competitor.offer.features));
+  writeAdData(newPanel, 'description', competitor.offer.description);
 
-  replaceAvatar(arr);
+  replaceAvatar(competitor);
 
   parentBlock.removeChild(dialogPanel);
   parentBlock.appendChild(newPanel);
@@ -168,10 +174,33 @@ function writeType(type) {
   }
 }
 
-function replaceAvatar(arr) {
+function replaceAvatar(competitor) {
   var dialogTitle = document.querySelector('.dialog__title');
   var avatarImg = document.querySelector('.dialog__title > img');
 
   dialogTitle.removeChild(avatarImg);
-  dialogTitle.insertAdjacentHTML('afterbegin', '<img src="' + arr[0].author.avatar + '" alt="Avatar" width="70" height="70">');
+  dialogTitle.insertAdjacentHTML('afterbegin', '<img src="' + competitor.author.avatar + '" alt="Avatar" width="70" height="70">');
 }
+
+var pins = document.querySelectorAll('.pin');
+var dialog = document.querySelector('.dialog');
+var dialogClose = document.querySelector('.dialog__close');
+
+for (var i = 0; i < pins.length; i++) {
+  var pin = pins[i];
+  pin.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var target = e.target;
+    for (var y = 0; y < pins.length; y++) {
+      if (pins[y].classList.contains('pin--active')) {
+        pins[y].classList.remove('pin--active');
+      }
+    }
+    target.classList.add('pin--active');
+    // drawDialogPanel(competitors[i]);
+  });
+}
+
+dialogClose.addEventListener('click', function () {
+  dialog.style.display = 'none';
+});
