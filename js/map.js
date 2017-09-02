@@ -28,11 +28,16 @@ var checkTimes = ['12:00', '13:00', '14:00'];
 
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
+var pinSize = {
+  width: 40,
+  height: 40
+};
+
 var shuffleTitles = shuffle(titles);
 
 var competitors = createClosestCompetitors(images, shuffleTitles);
 
-drawPins(competitors);
+drawPins(competitors, pinSize);
 drawDialogPanel(competitors[0]);
 
 function createClosestCompetitors(imagesList, titlesList) {
@@ -99,30 +104,27 @@ function shuffle(arr) {
   return newArray;
 }
 
-function createPin(competitor, widthPin, heightPin) {
+function createPin(competitor, size, i) {
   var pin = document.createElement('div');
-  var x = competitor.location.x - (widthPin / 2);
-  var y = competitor.location.y - heightPin;
+  var x = competitor.location.x - (size.width / 2);
+  var y = competitor.location.y - size.height;
 
   pin.className = 'pin';
+  pin.setAttribute('data-id', i);
+  pin.setAttribute('tabindex', i);
   pin.style.left = x + 'px';
   pin.style.top = y + 'px';
-  pin.innerHTML = '<img src=" ' + competitor.author.avatar + ' " class="rounded" width=" ' + widthPin + ' " height=" ' + heightPin + ' "/>';
+  pin.innerHTML = '<img src=" ' + competitor.author.avatar + ' " class="rounded" width=" ' + size.width + ' " height=" ' + size.height + ' "/>';
 
   return pin;
 }
 
-function drawPins(arr) {
+function drawPins(arr, size) {
   var pinMap = document.querySelector('.tokyo__pin-map');
   var fragment = document.createDocumentFragment();
 
-  //  TODO create 'createPin' func ~108-122
-
-  var widthPin = 40;
-  var heightPin = 40;
-
   for (var i = 0; i < arr.length; i++) {
-    fragment.appendChild(createPin(arr[i], widthPin, heightPin));
+    fragment.appendChild(createPin(arr[i], size, i));
   }
 
   pinMap.appendChild(fragment);
@@ -183,23 +185,39 @@ function replaceAvatar(competitor) {
 }
 
 var pins = document.querySelectorAll('.pin');
+var map = document.querySelector('.tokyo__pin-map');
 var dialog = document.querySelector('.dialog');
 var dialogClose = document.querySelector('.dialog__close');
 
-for (var i = 0; i < pins.length; i++) {
-  var pin = pins[i];
-  pin.addEventListener('click', function (e) {
-    e.stopPropagation();
-    var target = e.target;
-    for (var y = 0; y < pins.length; y++) {
-      if (pins[y].classList.contains('pin--active')) {
-        pins[y].classList.remove('pin--active');
-      }
+function onPinClick(e) {
+  var target = e.target;
+
+  if (!target.classList.contains('.pin')) {
+    target = e.target.parentNode;
+  }
+
+  for (var i = 0; i < pins.length; i++) {
+    if (pins[i].classList.contains('pin--active')) {
+      pins[i].classList.remove('pin--active');
     }
-    target.classList.add('pin--active');
-    // drawDialogPanel(competitors[i]);
-  });
+  }
+  target.classList.add('pin--active');
+
+  var pinID = target.dataset.id;
+  if (pinID) {
+    drawDialogPanel(competitors[pinID]);
+    dialog.style.display = 'block';
+  }
 }
+
+function enterPinClick(e) {
+  if (e.keyCode === 13) {
+    onPinClick(e);
+  }
+}
+
+map.addEventListener('click', onPinClick);
+map.addEventListener('keyup', enterPinClick);
 
 dialogClose.addEventListener('click', function () {
   dialog.style.display = 'none';
