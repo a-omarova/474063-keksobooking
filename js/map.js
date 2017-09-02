@@ -193,6 +193,9 @@ function onPinClick(e) {
   var target = e.target;
 
   if (!target.classList.contains('.pin')) {
+    if (!target.parentNode.classList.contains('.pin')) {
+      return;
+    }
     target = e.target.parentNode;
   }
 
@@ -221,4 +224,9 @@ map.addEventListener('keyup', enterPinClick);
 
 dialogClose.addEventListener('click', function () {
   dialog.style.display = 'none';
+  for (var i = 0; i < pins.length; i++) {
+    if (pins[i].classList.contains('pin--active')) {
+      pins[i].classList.remove('pin--active');
+    }
+  }
 });
