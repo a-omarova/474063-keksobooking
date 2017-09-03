@@ -193,7 +193,7 @@ function onPinClick(e) {
   var target = e.target;
 
   if (!target.classList.contains('.pin')) {
-    if (!target.parentNode.classList.contains('.pin')) {
+    if (target === map) {
       return;
     }
     target = e.target.parentNode;
@@ -214,13 +214,13 @@ function onPinClick(e) {
 }
 
 function enterPinClick(e) {
-  if (e.keyCode === 13) {
+  if (e.keyCode === 13 || e.which === 13) {
     onPinClick(e);
   }
 }
 
 map.addEventListener('click', onPinClick);
-map.addEventListener('keyup', enterPinClick);
+map.addEventListener('keypress', enterPinClick);
 
 dialogClose.addEventListener('click', function () {
   dialog.style.display = 'none';
