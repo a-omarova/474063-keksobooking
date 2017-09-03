@@ -189,15 +189,7 @@ var map = document.querySelector('.tokyo__pin-map');
 var dialog = document.querySelector('.dialog');
 var dialogClose = document.querySelector('.dialog__close');
 
-function onPinClick(e) {
-  var target = e.target;
-
-  if (!target.classList.contains('.pin')) {
-    if (target === map) {
-      return;
-    }
-    target = e.target.parentNode;
-  }
+function showDialog(target) {
 
   for (var i = 0; i < pins.length; i++) {
     if (pins[i].classList.contains('pin--active')) {
@@ -213,20 +205,43 @@ function onPinClick(e) {
   }
 }
 
+function onPinClick(e) {
+  var target = e.target;
+
+  if (!target.classList.contains('.pin')) {
+    if (target === map) {
+      return;
+    }
+    target = e.target.parentNode;
+  }
+
+  showDialog(target);
+}
+
 function enterPinClick(e) {
+  var target = e.target;
   if (e.keyCode === 13 || e.which === 13) {
-    onPinClick(e);
+    showDialog(target);
   }
 }
 
-map.addEventListener('click', onPinClick);
-map.addEventListener('keypress', enterPinClick);
-
-dialogClose.addEventListener('click', function () {
+function onCloseDialogClick() {
   dialog.style.display = 'none';
   for (var i = 0; i < pins.length; i++) {
     if (pins[i].classList.contains('pin--active')) {
       pins[i].classList.remove('pin--active');
     }
   }
-});
+}
+
+function enterCloseDialog(e) {
+  if (e.keyCode === 13 || e.which === 13) {
+    onCloseDialogClick();
+  }
+}
+
+map.addEventListener('click', onPinClick);
+map.addEventListener('keypress', enterPinClick);
+
+dialogClose.addEventListener('click', onCloseDialogClick);
+dialogClose.addEventListener('click', enterCloseDialog);
