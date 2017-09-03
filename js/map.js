@@ -242,8 +242,10 @@ function enterCloseDialog(e) {
 
 function escCloseDialog(e) {
   if (e.keyCode === 27 || e.which === 27) {
+    console.log('jhuhuh');
     onCloseDialogClick();
   }
+  document.removeEventListener('keydown', escCloseDialog);
 }
 
 map.addEventListener('click', onPinClick);
