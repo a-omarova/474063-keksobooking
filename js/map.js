@@ -240,8 +240,16 @@ function enterCloseDialog(e) {
   }
 }
 
+function escCloseDialog(e) {
+  if (e.keyCode === 27 || e.which === 27) {
+    onCloseDialogClick();
+  }
+}
+
 map.addEventListener('click', onPinClick);
 map.addEventListener('keypress', enterPinClick);
 
 dialogClose.addEventListener('click', onCloseDialogClick);
-dialogClose.addEventListener('click', enterCloseDialog);
+dialogClose.addEventListener('keypress', enterCloseDialog);
+
+document.addEventListener('keydown', escCloseDialog);
