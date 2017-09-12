@@ -28,7 +28,7 @@ var checkTimes = ['12:00', '13:00', '14:00'];
 
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
-var pinSize = {
+var PIN_SIZE = {
   width: 40,
   height: 40
 };
@@ -37,7 +37,7 @@ var shuffleTitles = shuffle(titles);
 
 var competitors = createClosestCompetitors(images, shuffleTitles);
 
-drawPins(competitors, pinSize);
+drawPins(competitors);
 drawDialogPanel(competitors[0]);
 
 function createClosestCompetitors(imagesList, titlesList) {
@@ -119,12 +119,12 @@ function createPin(competitor, size, i) {
   return pin;
 }
 
-function drawPins(arr, size) {
+function drawPins(arr) {
   var pinMap = document.querySelector('.tokyo__pin-map');
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < arr.length; i++) {
-    fragment.appendChild(createPin(arr[i], size, i));
+    fragment.appendChild(createPin(arr[i], PIN_SIZE, i));
   }
 
   pinMap.appendChild(fragment);
@@ -189,30 +189,54 @@ var map = document.querySelector('.tokyo__pin-map');
 var dialog = document.querySelector('.dialog');
 var dialogClose = document.querySelector('.dialog__close');
 
-function showDialog(target) {
+// function showDialog(target) {
+//   var pinID = target.dataset.id;
+//
+//   for (var i = 0; i < pins.length; i++) {
+//     if (pins[i].classList.contains('pin--active')) {
+//       pins[i].classList.remove('pin--active');
+//     }
+//   }
+//   target.classList.add('pin--active');
+//
+//   if (pinID) {
+//     drawDialogPanel(competitors[pinID]);
+//     dialog.style.display = 'block';
+//   }
+// }
+
+function showDialog(pinID) {
 
   for (var i = 0; i < pins.length; i++) {
     if (pins[i].classList.contains('pin--active')) {
       pins[i].classList.remove('pin--active');
     }
   }
-  target.classList.add('pin--active');
+  console.log(pinID, 'pinID');
+  pinID.classList.add('pin--active');
 
-  var pinID = target.dataset.id;
-  if (pinID) {
-    drawDialogPanel(competitors[pinID]);
-    dialog.style.display = 'block';
-  }
+
+  drawDialogPanel(competitors[pinID]);
+  dialog.style.display = 'block';
+
 }
+
+// function redrawActivePin(pinID) {
+//   for (var i = 0; i < pins.length; i++) {
+//     if (pins[i].classList.contains('pin--active')) {
+//       pins[i].classList.remove('pin--active');
+//     }
+//   }
+//   target.classList.add('pin--active');
+// }
 
 function onPinClick(e) {
   var target = e.target;
 
-  if (!target.classList.contains('.pin')) {
-    if (target === map) {
-      return;
-    }
-    target = e.target.parentNode;
+  if (target === map) {
+    return;
+  } else if (!target.classList.contains('pin')) {
+    target = target.parentNode;
   }
 
   showDialog(target);
@@ -220,8 +244,10 @@ function onPinClick(e) {
 
 function enterPinClick(e) {
   var target = e.target;
+  var pinID = target.dataset.id;
+  console.log(pinID);
   if (e.keyCode === 13 || e.which === 13) {
-    showDialog(target);
+    showDialog(pinID);
   }
 }
 
